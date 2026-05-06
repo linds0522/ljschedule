@@ -309,6 +309,22 @@ button{font-family:inherit;cursor:pointer;border:none;}
 
 </div><!-- /container -->
 
+<!-- 비번 모달 -->
+<div class="overlay" id="pwOverlay">
+  <div class="modal" style="max-width:280px;text-align:center">
+    <div style="font-size:32px;margin-bottom:8px">🔒</div>
+    <h2 style="margin-bottom:16px">비밀번호 입력</h2>
+    <div class="field">
+      <input type="password" id="pwInput" placeholder="비번 입력" style="text-align:center;font-size:20px;letter-spacing:8px" onkeydown="if(event.key==='Enter')pwConfirm()"/>
+    </div>
+    <div style="color:#e05;font-size:12px;margin-bottom:8px;min-height:16px" id="pwError"></div>
+    <div class="modal-actions" style="justify-content:center">
+      <button class="btn-cancel" onclick="pwCancel()">취소</button>
+      <button class="btn-save" onclick="pwConfirm()">확인 ✓</button>
+    </div>
+  </div>
+</div>
+
 <!-- 일정 추가/수정 모달 -->
 <div class="overlay" id="overlay">
   <div class="modal">
@@ -473,20 +489,49 @@ function formatDateLabel(dateStr){
   return `${d.getMonth()+1}/${d.getDate()} (${DAYS_SHORT[d.getDay()]})`;
 }
 
-// 비밀번호 확인
-function checkPassword(){
-  const pw=prompt('🔒 비밀번호를 입력해주세요');
-  return pw===PASSWORD;
+// 비밀번호 모달
+let _pwCallback=null;
+function checkPassword(callback){
+  _pwCallback=callback;
+  document.getElementById('pwInput').value='';
+  document.getElementById('pwError').textContent='';
+  document.getElementById('pwOverlay').classList.add('open');
+  setTimeout(()=>document.getElementById('pwInput').focus(),100);
+}
+function pwConfirm(){
+  const pw=document.getElementById('pwInput').value;
+  if(pw===PASSWORD){
+    document.getElementById('pwOverlay').classList.remove('open');
+    if(_pwCallback)_pwCallback();
+  }else{
+    document.getElementById('pwError').textContent='❌ 비번이 틀렸어요!';
+    document.getElementById('pwInput').value='';
+    document.getElementById('pwInput').focus();
+  }
+}
+function pwCancel(){
+  document.getElementById('pwOverlay').classList.remove('open');
+  _pwCallback=null;
 }
 
 function saveToStorage(){
   localStorage.setItem('ijuni3_ev',JSON.stringify(events));
   localStorage.setItem('ijuni3_id',nextId);
+  localStorage.setItem('ijuni3_ver','4');
 }
 function loadFromStorage(){
   const s=localStorage.getItem('ijuni3_ev');
-  if(s){events=JSON.parse(s);nextId=parseInt(localStorage.getItem('ijuni3_id'))||200;}
-  else{events=makeWeeklyEvents();nextId=events.length+1;saveToStorage();}
+  const ver=localStorage.getItem('ijuni3_ver');
+  // 버전 4 = 전체연도 데이터. 다른 버전이면 초기화
+  if(s && ver==='4'){
+    events=JSON.parse(s);
+    nextId=parseInt(localStorage.getItem('ijuni3_id'))||500;
+  } else {
+    events=makeWeeklyEvents();
+    nextId=events.length+1;
+    saveToStorage();
+    localStorage.setItem('ijuni3_ver','4');
+  }
 }
 
 function switchMain(p){
@@ -590,12 +635,10 @@ function renderDayView(area,dayName){
 
 // ── 비번 가드 ──
 function openAddGuard(dayName, dateStr){
-  if(!checkPassword())return;
-  openAddModal(dayName,dateStr);
+  checkPassword(()=>openAddModal(dayName,dateStr));
 }
 function openEditGuard(id){
-  if(!checkPassword())return;
-  openEdit(id);
+  checkPassword(()=>openEdit(id));
 }
 
 // ── 월간 달력 ──
