@@ -327,155 +327,235 @@ button{font-family:inherit;cursor:pointer;border:none;}
 </div>
 
 <script>
-// ── 기본 데이터 ──
-const DAYS_KO = ['일요일','월요일','화요일','수요일','목요일','금요일','토요일'];
-const DAYS_SHORT = ['일','월','화','수','목','금','토'];
-const TIMES = ['8:40','9:00','14:30','14:40','15:00','16:00','16:30','17:00','18:10'];
-const COLORS = [
-  {id:'lemon', bg:'#FFF3B0', text:'#5a4a00'},
-  {id:'pink',  bg:'#FFD6E0', text:'#7a2040'},
-  {id:'mint',  bg:'#C8F0E0', text:'#1a5a3a'},
-  {id:'sky',   bg:'#C8E8FF', text:'#1a3a6a'},
-  {id:'lilac', bg:'#E8D6FF', text:'#4a2a7a'},
-  {id:'peach', bg:'#FFE4CC', text:'#7a3a10'},
-  {id:'coral', bg:'#FFB3A0', text:'#7a2010'},
+const DAYS_KO=['일요일','월요일','화요일','수요일','목요일','금요일','토요일'];
+const DAYS_SHORT=['일','월','화','수','목','금','토'];
+const TIMES=['8:40','9:00','14:30','14:40','15:00','16:00','16:30','17:00','18:10'];
+const COLORS=[
+  {id:'lemon',bg:'#FFF3B0',text:'#5a4a00'},
+  {id:'pink', bg:'#FFD6E0',text:'#7a2040'},
+  {id:'mint', bg:'#C8F0E0',text:'#1a5a3a'},
+  {id:'sky',  bg:'#C8E8FF',text:'#1a3a6a'},
+  {id:'lilac',bg:'#E8D6FF',text:'#4a2a7a'},
+  {id:'peach',bg:'#FFE4CC',text:'#7a3a10'},
+  {id:'coral',bg:'#FFB3A0',text:'#7a2010'},
 ];
-
-// 5월 공휴일
-const HOLIDAYS = {
-  '2026-05-01': '🌿 근로자의날',
-  '2026-05-04': '🔴 재량휴업',
-  '2026-05-05': '🎠 어린이날',
-  '2026-05-25': '🪷 석가탄신일',
+const HOLIDAYS={
+  // 2026 5월
+  '2026-05-01':'🌿 근로자의날',
+  '2026-05-04':'🔴 재량휴업',
+  '2026-05-05':'🎠 어린이날',
+  '2026-05-25':'🪷 석가탄신일',
+  // 2026 6월
+  '2026-06-06':'🇰🇷 현충일',
+  // 2026 7월
+  '2026-07-23':'☀️ 여름방학',
+  '2026-07-24':'☀️ 여름방학',
+  '2026-07-25':'☀️ 여름방학',
+  '2026-07-26':'☀️ 여름방학',
+  '2026-07-27':'☀️ 여름방학',
+  '2026-07-28':'☀️ 여름방학',
+  '2026-07-29':'☀️ 여름방학',
+  '2026-07-30':'☀️ 여름방학',
+  '2026-07-31':'☀️ 여름방학',
+  // 2026 8월
+  '2026-08-01':'☀️ 여름방학',
+  '2026-08-02':'☀️ 여름방학',
+  '2026-08-03':'☀️ 여름방학',
+  '2026-08-04':'☀️ 여름방학',
+  '2026-08-05':'☀️ 여름방학',
+  '2026-08-06':'☀️ 여름방학',
+  '2026-08-07':'☀️ 여름방학',
+  '2026-08-08':'☀️ 여름방학',
+  '2026-08-09':'☀️ 여름방학',
+  '2026-08-10':'☀️ 여름방학',
+  '2026-08-15':'🇰🇷 광복절',
+  '2026-08-17':'🇰🇷 광복절(대체)',
+  '2026-08-27':'🏫 2학기 개학',
+  // 2026 9월
+  '2026-09-24':'🌕 추석',
+  '2026-09-25':'🌕 추석',
+  '2026-09-26':'🌕 추석',
+  '2026-09-27':'🌕 추석(대체)',
+  // 2026 10월
+  '2026-10-03':'🇰🇷 개천절',
+  '2026-10-05':'🇰🇷 개천절(대체)',
+  '2026-10-09':'🇰🇷 한글날',
+  // 2026 11월
+  '2026-11-24':'📚 3분기 종료',
+  // 2026 12월
+  '2026-12-18':'🎅 Santa Visit',
+  '2026-12-23':'🎄 크리스마스(학교없음)',
+  '2026-12-24':'🎄 크리스마스이브',
+  '2026-12-25':'🎄 크리스마스',
+  '2026-12-28':'❄️ 겨울방학',
+  '2026-12-29':'❄️ 겨울방학',
+  '2026-12-30':'❄️ 겨울방학',
+  '2026-12-31':'❄️ 겨울방학',
+  // 2027 1월
+  '2027-01-01':'🎊 신정',
+  '2027-01-02':'❄️ 겨울방학',
+  '2027-01-28':'📚 January Month 종료',
+  '2027-01-29':'🌸 설날연휴',
+  '2027-01-30':'🌸 설날',
+  '2027-01-31':'🌸 설날연휴',
+  // 2027 2월
+  '2027-02-20':'🎉 졸업 파티',
+  '2027-02-26':'🎓 졸업/종업식',
 };
 
-// 5월 기본 일정 (날짜 기반)
-// 매주 반복 스케줄 → 5월 날짜로 풀어서 저장
-// 공휴일 주(5/4,5/5) 학원 없음, 5/25 석가탄신일 없음
-function makeWeeklyEvents() {
-  // [날짜, 이름, 시간, 메모, 색]
-  const template = [
-    // 월
+const SCHOOL_EVENTS={
+  '2026-03-02':'🏫 개학 첫날',
+  '2026-05-27':'📚 1분기 종료',
+  '2026-06-23':'📚 June Month 종료',
+  '2026-07-17':'📚 July Month 종료',
+  '2026-08-27':'📚 2학기 개학',
+  '2026-09-28':'📚 September Month 종료',
+  '2026-10-27':'📚 October Month 종료',
+  '2026-11-24':'📚 November Month 종료',
+  '2026-12-21':'📚 December Month 종료',
+  '2027-01-28':'📚 January Month 종료',
+  '2027-02-28':'📚 February Month 종료',
+};
+const PASSWORD='6927';
+
+function makeWeeklyEvents(){
+  const template=[
     ['월',{n:'🏫 등원',t:'8:40',note:'',c:'sky'}],
     ['월',{n:'🎻 바이올린',t:'14:30~15:30',note:'소래음',c:'lilac'}],
     ['월',{n:'🎹 이화뮤뮤',t:'16:00~17:00',note:'→ 도농초',c:'pink'}],
     ['월',{n:'🚌 뮤뮤버스',t:'18:10',note:'도농초 5시5분',c:'coral'}],
-    // 화
     ['화',{n:'🏫 등원',t:'8:40',note:'',c:'sky'}],
     ['화',{n:'🎹 이화뮤뮤',t:'15:00~16:00',note:'시애틀→이화뮤뮤→필즈',c:'pink'}],
     ['화',{n:'✏️ 필즈',t:'16:10~18:00',note:'→ 도농초앞',c:'lilac'}],
     ['화',{n:'🚌 뮤뮤버스',t:'18:10',note:'도농초 6시5분',c:'coral'}],
-    // 수
     ['수',{n:'🏫 등원',t:'8:40',note:'',c:'sky'}],
     ['수',{n:'🎨 MTA',t:'14:30~15:30',note:'시애틀→MTA→이화뮤뮤',c:'peach'}],
     ['수',{n:'🎹 이화뮤뮤',t:'16:00~17:00',note:'→ 도농초',c:'pink'}],
     ['수',{n:'🚌 뮤뮤버스',t:'18:10',note:'도농초 6시10분',c:'coral'}],
-    // 목
     ['목',{n:'🏫 등원',t:'8:40',note:'',c:'sky'}],
     ['목',{n:'🎨 아토아트',t:'14:40~16:30',note:'',c:'lemon'}],
     ['목',{n:'⚽ 축구',t:'17:00~18:30',note:'',c:'mint'}],
-    // 금
     ['금',{n:'🏫 등원',t:'8:40',note:'',c:'sky'}],
     ['금',{n:'🏫 방과후',t:'14:30~16:30',note:'',c:'sky'}],
     ['금',{n:'🎨 MTA',t:'16:30~17:30',note:'시애틀→MTA→도농초',c:'peach'}],
     ['금',{n:'🚌 도농초버스',t:'18:10',note:'',c:'coral'}],
-    // 토
     ['토',{n:'🤿 스쿠버',t:'9:00~11:00',note:'',c:'mint'}],
   ];
-
-  const dayMap = {'월':1,'화':2,'수':3,'목':4,'금':5,'토':6};
-  // 2026년 5월 1일은 금요일(5)
-  // 1일부터 31일까지
-  const evs = [];
-  let id = 1;
-
-  for (let d = 1; d <= 31; d++) {
-    const date = new Date(2026, 4, d); // month 4 = May
-    const dow = date.getDay(); // 0=일,1=월,...,6=토
-    const dateStr = `2026-05-${String(d).padStart(2,'0')}`;
-
-    // 공휴일이면 등원/학원 스킵 (스쿠버는 토요일이라 유지)
-    const isHoliday = !!HOLIDAYS[dateStr];
-
-    template.forEach(([day, ev]) => {
-      if (dayMap[day] !== dow) return;
-      // 공휴일이면 토요일(스쿠버) 빼고 스킵
-      if (isHoliday && dow !== 6) return;
-      evs.push({id: id++, date: dateStr, name: ev.n, time: ev.t, note: ev.note, color: ev.c});
+  const dayMap={'월':1,'화':2,'수':3,'목':4,'금':5,'토':6};
+  const evs=[];let id=1;
+  // 2026년 3월부터 2027년 2월까지
+  const startDate=new Date(2026,2,2); // 3월 2일 개학
+  const endDate=new Date(2027,1,28);  // 2월 28일 종업
+  for(let cur=new Date(startDate);cur<=endDate;cur.setDate(cur.getDate()+1)){
+    const dow=cur.getDay();
+    const dateStr=`${cur.getFullYear()}-${String(cur.getMonth()+1).padStart(2,'0')}-${String(cur.getDate()).padStart(2,'0')}`;
+    const isHoliday=!!HOLIDAYS[dateStr];
+    // 여름방학/겨울방학 기간은 스킵
+    const holidayLabel=HOLIDAYS[dateStr]||'';
+    if(holidayLabel.includes('방학')&&!holidayLabel.includes('개학'))continue;
+    template.forEach(([day,ev])=>{
+      if(dayMap[day]!==dow)return;
+      if(isHoliday&&dow!==6)return;
+      evs.push({id:id++,date:dateStr,name:ev.n,time:ev.t,note:ev.note,color:ev.c});
     });
   }
   return evs;
 }
 
-// 상태
-let events = [];
-let nextId = 1;
-let currentMain = 'schedule';
-let currentSub = '전체';
-let calYear = 2026, calMonth = 4; // month 4 = May (0-indexed)
-let editingId = null;
-let selectedColor = 'sky';
-let selectedDate = null; // 월간에서 선택한 날짜
+let events=[],nextId=1,currentMain='schedule',currentSub='전체';
+const today=new Date();
+let calYear=today.getFullYear(),calMonth=today.getMonth(),editingId=null,selectedColor='sky',selectedDate=null;
 
 function getColor(id){return COLORS.find(c=>c.id===id)||COLORS[0];}
-
-
-
-// 날짜 → 요일 한글
-function dateToDay(dateStr){
-  const d = new Date(dateStr);
-  return DAYS_KO[d.getDay()];
+function dateToDay(dateStr){return DAYS_KO[new Date(dateStr).getDay()];}
+function formatDateLabel(dateStr){
+  const d=new Date(dateStr);
+  return `${d.getMonth()+1}/${d.getDate()} (${DAYS_SHORT[d.getDay()]})`;
 }
 
-// ── 메인 탭 전환 ──
+// 비밀번호 확인
+function checkPassword(){
+  const pw=prompt('🔒 비밀번호를 입력해주세요');
+  return pw===PASSWORD;
+}
+
+function saveToStorage(){
+  localStorage.setItem('ijuni3_ev',JSON.stringify(events));
+  localStorage.setItem('ijuni3_id',nextId);
+}
+function loadFromStorage(){
+  const s=localStorage.getItem('ijuni3_ev');
+  if(s){events=JSON.parse(s);nextId=parseInt(localStorage.getItem('ijuni3_id'))||200;}
+  else{events=makeWeeklyEvents();nextId=events.length+1;saveToStorage();}
+}
+
 function switchMain(p){
-  currentMain = p;
+  currentMain=p;
   ['schedule','monthly','school','lunch','snack'].forEach(x=>{
-    document.getElementById('page-'+x).style.display = x===p?'block':'none';
+    document.getElementById('page-'+x).style.display=x===p?'block':'none';
   });
   document.querySelectorAll('.main-tab').forEach((b,i)=>{
-    b.classList.toggle('active', ['schedule','monthly','school','lunch','snack'][i]===p);
+    b.classList.toggle('active',['schedule','monthly','school','lunch','snack'][i]===p);
   });
-  if(p==='monthly') renderCalendar();
+  if(p==='monthly')renderCalendar();
 }
 
-// ── 주간일정 ──
+// ── 주간 ──
 function renderSubTabs(){
-  const WEEK_DAYS = ['전체','월요일','화요일','수요일','목요일','금요일','토요일','일요일'];
-  document.getElementById('subTabs').innerHTML = WEEK_DAYS.map(t=>
+  const WEEK_DAYS=['전체','월요일','화요일','수요일','목요일','금요일','토요일','일요일'];
+  document.getElementById('subTabs').innerHTML=WEEK_DAYS.map(t=>
     `<button class="sub-tab ${currentSub===t?'active':''}" onclick="setSub('${t}')">${t}</button>`
   ).join('');
 }
 function setSub(t){currentSub=t;renderSubTabs();renderSchedule();}
 
 function renderSchedule(){
-  const area = document.getElementById('scheduleArea');
-  currentSub==='전체' ? renderFull(area) : renderDayView(area, currentSub);
+  const area=document.getElementById('scheduleArea');
+  currentSub==='전체'?renderFull(area):renderDayView(area,currentSub);
 }
 
 function renderFull(area){
-  const SHOW_DAYS = ['월요일','화요일','수요일','목요일','금요일','토요일'];
-  let h = `<div style="overflow-x:auto"><table class="schedule-table"><thead><tr><th style="width:38px;background:transparent"></th>`;
-  SHOW_DAYS.forEach(d=>h+=`<th>${d.replace('요일','')}</th>`);
+  const SHOW_DAYS=['월요일','화요일','수요일','목요일','금요일','토요일'];
+  // 5월의 해당 요일 날짜들 수집
+  const dayDates={};
+  SHOW_DAYS.forEach(d=>{
+    dayDates[d]=[];
+    for(let i=1;i<=31;i++){
+      const ds=`2026-05-${String(i).padStart(2,'0')}`;
+      if(dateToDay(ds)===d) dayDates[d].push(ds);
+    }
+  });
+
+  let h=`<div style="overflow-x:auto"><table class="schedule-table"><thead><tr><th style="width:38px;background:transparent"></th>`;
+  SHOW_DAYS.forEach(d=>{
+    const dates=dayDates[d];
+    const label=d.replace('요일','');
+    // 날짜들 작게 표시
+    const dateSubs=dates.map(ds=>{
+      const day=parseInt(ds.split('-')[2]);
+      const isHol=!!HOLIDAYS[ds];
+      return `<span style="font-size:9px;${isHol?'color:#e05;':'color:#aaa;'}">${day}일 </span>`;
+    }).join('');
+    h+=`<th><div>${label}</div><div style="font-weight:400;line-height:1.6">${dateSubs}</div></th>`;
+  });
   h+=`</tr></thead><tbody>`;
+
   TIMES.forEach(time=>{
-    const has = SHOW_DAYS.some(d=>events.some(e=>dateToDay(e.date)===d && e.time.startsWith(time)));
-    if(!has) return;
+    const has=SHOW_DAYS.some(d=>events.some(e=>dateToDay(e.date)===d&&e.time.startsWith(time)));
+    if(!has)return;
     h+=`<tr><td class="time-label">${time}</td>`;
     SHOW_DAYS.forEach(d=>{
-      // 가장 최근 해당 요일 이벤트들
-      const evs = events.filter(e=>dateToDay(e.date)===d && e.time.startsWith(time));
-      // 중복 이름 제거해서 대표만 표시
-      const seen = new Set();
-      const unique = evs.filter(e=>{if(seen.has(e.name))return false;seen.add(e.name);return true;});
+      const evs=events.filter(e=>dateToDay(e.date)===d&&e.time.startsWith(time));
+      const seen=new Set();
+      const unique=evs.filter(e=>{if(seen.has(e.name))return false;seen.add(e.name);return true;});
       h+=`<td>`;
       unique.forEach(ev=>{
         const c=getColor(ev.color);
-        h+=`<div class="ev-card" style="background:${c.bg}" onclick="openEditByName('${ev.name}','${d}')">
+        h+=`<div class="ev-card" style="background:${c.bg}" onclick="openEditGuard(${ev.id})">
           <span class="ename">${ev.name}</span>${ev.note?`<span class="enote">${ev.note}</span>`:''}
         </div>`;
       });
-      h+=`<button class="add-mini" onclick="openAddModal('${d}',null)">＋</button></td>`;
+      h+=`<button class="add-mini" onclick="openAddGuard('${d}',null)">＋</button></td>`;
     });
     h+=`</tr>`;
   });
@@ -483,41 +563,44 @@ function renderFull(area){
   area.innerHTML=h;
 }
 
-function renderDayView(area, dayName){
-  // 해당 요일의 모든 이벤트 중 대표(이름 기준 중복제거)
-  const evs = events.filter(e=>dateToDay(e.date)===dayName);
-  const seen = new Set();
-  const unique = evs.filter(e=>{if(seen.has(e.name))return false;seen.add(e.name);return true;});
-  unique.sort((a,b)=>parseInt(a.time.replace(':',''))-parseInt(b.time.replace(':','')));
-
+function renderDayView(area,dayName){
+  const evs=events.filter(e=>dateToDay(e.date)===dayName);
+  const seen=new Set();
+  const unique=evs.filter(e=>{if(seen.has(e.name))return false;seen.add(e.name);return true;});
+  unique.sort((a,b)=>a.time.localeCompare(b.time));
   let h=`<div class="day-view">`;
   if(!unique.length){
-    h+=`<div class="empty">📭 일정 없음<br><br><button class="btn-add" onclick="openAddModal('${dayName}',null)">＋ 추가</button></div>`;
-  } else {
+    h+=`<div class="empty">📭 일정 없음<br><br><button class="btn-add" onclick="openAddGuard('${dayName}',null)">＋ 추가</button></div>`;
+  }else{
     unique.forEach(ev=>{
       const c=getColor(ev.color);
+      const dateLabel=formatDateLabel(ev.date);
       h+=`<div class="day-row">
-        <div class="day-time">${ev.time}</div>
-        <div class="ev-card" style="background:${c.bg};flex:1" onclick="openEditByName('${ev.name}','${dayName}')">
+        <div class="day-time">${ev.time}<br><span style="font-size:9px;color:#bbb">${dateLabel}</span></div>
+        <div class="ev-card" style="background:${c.bg};flex:1" onclick="openEditGuard(${ev.id})">
           <span class="ename">${ev.name}</span>${ev.note?`<span class="enote">${ev.note}</span>`:''}
         </div>
       </div>`;
     });
-    h+=`<div style="margin-top:10px"><button class="btn-add" style="width:100%" onclick="openAddModal('${dayName}',null)">＋ 이 날 추가</button></div>`;
+    h+=`<div style="margin-top:10px"><button class="btn-add" style="width:100%" onclick="openAddGuard('${dayName}',null)">＋ 이 날 추가</button></div>`;
   }
   h+=`</div>`;
   area.innerHTML=h;
 }
 
-// 요일 대표 이벤트 수정 (해당 요일 첫번째)
-function openEditByName(name, dayName){
-  const ev = events.find(e=>e.name===name && dateToDay(e.date)===dayName);
-  if(ev) openEdit(ev.id);
+// ── 비번 가드 ──
+function openAddGuard(dayName, dateStr){
+  if(!checkPassword())return;
+  openAddModal(dayName,dateStr);
+}
+function openEditGuard(id){
+  if(!checkPassword())return;
+  openEdit(id);
 }
 
 // ── 월간 달력 ──
 function changeMonth(d){
-  calMonth += d;
+  calMonth+=d;
   if(calMonth>11){calMonth=0;calYear++;}
   if(calMonth<0){calMonth=11;calYear--;}
   selectedDate=null;
@@ -528,110 +611,96 @@ function changeMonth(d){
 function renderCalendar(){
   const monthNames=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
   document.getElementById('calTitle').textContent=`${calYear}년 ${monthNames[calMonth]}`;
+  const firstDay=new Date(calYear,calMonth,1).getDay();
+  const lastDate=new Date(calYear,calMonth+1,0).getDate();
+  const todayStr=`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
 
-  const firstDay = new Date(calYear, calMonth, 1).getDay();
-  const lastDate = new Date(calYear, calMonth+1, 0).getDate();
-  const today = new Date();
-  const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
-
-  let h = DAYS_SHORT.map(d=>`<div class="cal-dow">${d}</div>`).join('');
-
-  // 이전달 빈칸
-  const prevLast = new Date(calYear, calMonth, 0).getDate();
+  let h=DAYS_SHORT.map(d=>`<div class="cal-dow">${d}</div>`).join('');
+  const prevLast=new Date(calYear,calMonth,0).getDate();
   for(let i=firstDay-1;i>=0;i--){
     h+=`<div class="cal-cell other-month"><div class="cal-day">${prevLast-i}</div></div>`;
   }
-
   for(let d=1;d<=lastDate;d++){
     const dateStr=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const dow = new Date(calYear,calMonth,d).getDay();
-    const isToday = dateStr===todayStr;
-    const holiday = HOLIDAYS[dateStr];
-    const dayEvs = events.filter(e=>e.date===dateStr).sort((a,b)=>a.time.localeCompare(b.time));
-    const isSelected = dateStr===selectedDate;
-
+    const dow=new Date(calYear,calMonth,d).getDay();
+    const isToday=dateStr===todayStr;
+    const holiday=HOLIDAYS[dateStr];
+    const dayEvs=events.filter(e=>e.date===dateStr).sort((a,b)=>a.time.localeCompare(b.time));
+    const isSelected=dateStr===selectedDate;
     let cls='cal-cell';
     if(dow===0)cls+=' sunday';
     if(dow===6)cls+=' saturday';
     if(isToday)cls+=' today';
     if(holiday)cls+=' holiday';
     if(isSelected)cls+=' today';
-
     h+=`<div class="${cls}" onclick="selectDate('${dateStr}')">`;
     h+=`<div class="cal-day">${d}</div>`;
-    if(holiday) h+=`<span class="cal-holiday-label">${holiday}</span>`;
+    if(holiday)h+=`<span class="cal-holiday-label">${holiday}</span>`;
+    const schoolEv=SCHOOL_EVENTS&&SCHOOL_EVENTS[dateStr];
+    if(schoolEv)h+=`<span class="cal-holiday-label" style="color:#185FA5">${schoolEv}</span>`;
     dayEvs.slice(0,2).forEach(ev=>{
       const c=getColor(ev.color);
       h+=`<span class="cal-ev" style="background:${c.bg}">${ev.name}</span>`;
     });
-    if(dayEvs.length>2) h+=`<span class="cal-more">+${dayEvs.length-2}개</span>`;
+    if(dayEvs.length>2)h+=`<span class="cal-more">+${dayEvs.length-2}개</span>`;
     h+=`</div>`;
   }
-
-  // 다음달 빈칸
-  const total = firstDay+lastDate;
-  const remain = total%7===0?0:7-(total%7);
+  const total=firstDay+lastDate;
+  const remain=total%7===0?0:7-(total%7);
   for(let i=1;i<=remain;i++){
     h+=`<div class="cal-cell other-month"><div class="cal-day">${i}</div></div>`;
   }
-
   document.getElementById('calGrid').innerHTML=h;
 }
 
 function selectDate(dateStr){
-  selectedDate = dateStr;
+  selectedDate=dateStr;
   renderCalendar();
   renderDateDetail(dateStr);
 }
 
 function renderDateDetail(dateStr){
-  const d = new Date(dateStr);
-  const dow = DAYS_KO[d.getDay()];
-  const [y,m,day] = dateStr.split('-');
-  const holiday = HOLIDAYS[dateStr];
-  const dayEvs = events.filter(e=>e.date===dateStr).sort((a,b)=>a.time.localeCompare(b.time));
-
+  const d=new Date(dateStr);
+  const dow=DAYS_KO[d.getDay()];
+  const [y,m,day]=dateStr.split('-');
+  const holiday=HOLIDAYS[dateStr];
+  const dayEvs=events.filter(e=>e.date===dateStr).sort((a,b)=>a.time.localeCompare(b.time));
   let h=`<div class="date-detail">
     <h3>${parseInt(m)}월 ${parseInt(day)}일 (${dow.replace('요일','')}) ${holiday?'<span style="color:#e05;font-size:12px">'+holiday+'</span>':''}</h3>`;
-
   if(!dayEvs.length){
     h+=`<div class="empty" style="padding:16px 0">일정 없음</div>`;
-  } else {
+  }else{
     dayEvs.forEach(ev=>{
       const c=getColor(ev.color);
       h+=`<div class="day-row">
         <div class="day-time">${ev.time}</div>
-        <div class="ev-card" style="background:${c.bg};flex:1" onclick="openEdit(${ev.id})">
+        <div class="ev-card" style="background:${c.bg};flex:1" onclick="openEditGuard(${ev.id})">
           <span class="ename">${ev.name}</span>${ev.note?`<span class="enote">${ev.note}</span>`:''}
         </div>
       </div>`;
     });
   }
   h+=`<div style="margin-top:10px">
-    <button class="btn-add" style="width:100%" onclick="openAddModal(null,'${dateStr}')">＋ 이 날 일정 추가</button>
+    <button class="btn-add" style="width:100%" onclick="openAddGuard(null,'${dateStr}')">＋ 이 날 일정 추가</button>
   </div></div>`;
-
   document.getElementById('dateDetail').innerHTML=h;
   document.getElementById('dateDetail').scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 
 // ── 모달 ──
-function openAddModal(dayName, dateStr){
+function openAddModal(dayName,dateStr){
   editingId=null;
   document.getElementById('modalTitle').textContent='✏️ 일정 추가';
   document.getElementById('deleteBtn').style.display='none';
-
-  // 날짜 기본값
   if(dateStr){
     document.getElementById('fDate').value=dateStr;
-  } else if(dayName){
-    // 해당 요일의 다음 날짜 찾기
-    const dayIdx = DAYS_KO.indexOf(dayName);
-    const today = new Date();
-    let d = new Date(today);
-    while(d.getDay()!==dayIdx) d.setDate(d.getDate()+1);
+  }else if(dayName){
+    const dayIdx=DAYS_KO.indexOf(dayName);
+    const _now=new Date();
+    let d=new Date(_now);
+    while(d.getDay()!==dayIdx)d.setDate(d.getDate()+1);
     document.getElementById('fDate').value=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-  } else {
+  }else{
     document.getElementById('fDate').value='';
   }
   document.getElementById('fName').value='';
@@ -675,34 +744,21 @@ function saveEvent(){
   if(editingId){
     const i=events.findIndex(e=>e.id===editingId);
     if(i>-1)events[i]={id:editingId,date,name,time,note,color:selectedColor};
-  } else {
+  }else{
     events.push({id:nextId++,date,name,time,note,color:selectedColor});
   }
-  saveToFirebase();
+  saveToStorage();
   closeModal();
   renderSchedule();
-  if(currentMain==='monthly'){
-    renderCalendar();
-    if(selectedDate) renderDateDetail(selectedDate);
-  }
+  if(currentMain==='monthly'){renderCalendar();if(selectedDate)renderDateDetail(selectedDate);}
 }
 
 function deleteEvent(){
   if(!editingId||!confirm('이 일정 지울까요? 🥺'))return;
   events=events.filter(e=>e.id!==editingId);
-  saveToFirebase();closeModal();
+  saveToStorage();closeModal();
   renderSchedule();
   if(currentMain==='monthly'){renderCalendar();if(selectedDate)renderDateDetail(selectedDate);}
-}
-
-function saveToFirebase(){
-  localStorage.setItem('ijuni3_ev',JSON.stringify(events));
-  localStorage.setItem('ijuni3_id',nextId);
-}
-function loadFromStorage(){
-  const s=localStorage.getItem('ijuni3_ev');
-  if(s){events=JSON.parse(s);nextId=parseInt(localStorage.getItem('ijuni3_id'))||200;}
-  else{events=makeWeeklyEvents();nextId=events.length+1;}
 }
 
 // 시작
