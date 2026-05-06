@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>🦁 이주니 일정표</title>
+
+<style>
+:root {
+  --cream: #FFFBF0;
+  --pink:  #FFD6E0;
+  --mint:  #C8F0E0;
+  --sky:   #C8E8FF;
+  --lemon: #FFF3B0;
+  --lilac: #E8D6FF;
+  --peach: #FFE4CC;
+  --coral: #FFB3A0;
+  --ink:   #3D2C2C;
+  --ink2:  #6B4F4F;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', 'Nanum Gothic', sans-serif;
+  background: var(--cream);
+  background-image:
+    radial-gradient(circle at 10% 20%, #FFD6E022 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, #C8E8FF22 0%, transparent 40%),
+    radial-gradient(circle at 50% 50%, #C8F0E022 0%, transparent 60%);
+  min-height: 100vh;
+  color: var(--ink);
+}
+
+/* 손그림 느낌 테두리 SVG filter */
+.squiggly {
+  filter: url(#squiggle);
+}
+
+.container { max-width: 900px; margin: 0 auto; padding: 24px 16px 60px; }
+
+/* ── 헤더 ── */
+.app-header {
+  text-align: center;
+  margin-bottom: 28px;
+  position: relative;
+}
+.header-badge {
+  display: inline-block;
+  background: var(--lemon);
+  border: 3px solid var(--ink);
+  border-radius: 24px;
+  padding: 10px 32px;
+  position: relative;
+  box-shadow: 4px 4px 0 var(--ink);
+}
+.header-badge h1 {
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--ink);
+  letter-spacing: -0.5px;
+}
+.header-badge p {
+  font-size: 12px;
+  color: var(--ink2);
+  margin-top: 2px;
+  font-weight: 400;
+}
+.deco-star {
+  position: absolute;
+  font-size: 20px;
+  animation: spin 6s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.deco-bounce {
+  display: inline-block;
+  animation: bounce 1.8s ease-in-out infinite;
+}
+@keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
+
+/* ── 메인 탭 ── */
+.main-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.main-tab {
+  flex: 1 1 calc(50% - 10px);
+  min-width: 100px;
+  border: 2.5px solid var(--ink);
+  border-radius: 18px;
+  padding: 12px 6px 10px;
+  background: white;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink2);
+  text-align: center;
+  box-shadow: 3px 3px 0 var(--ink);
+  transition: transform 0.1s, box-shadow 0.1s;
+  position: relative;
+  overflow: hidden;
+}
+.main-tab:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 var(--ink);
+}
+.main-tab:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--ink);
+}
+.main-tab.active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--ink);
+  color: var(--ink);
+}
+.main-tab.t-schedule.active { background: var(--lemon); }
+.main-tab.t-school.active   { background: var(--mint); }
+.main-tab.t-lunch.active    { background: var(--peach); }
+.main-tab.t-snack.active    { background: var(--pink); }
+.tab-icon { font-size: 22px; display: block; margin-bottom: 4px; }
+
+/* ── 서브 탭 ── */
+.sub-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+.sub-tab {
+  padding: 5px 14px;
+  border: 2px solid var(--ink);
+  border-radius: 20px;
+  background: white;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink2);
+  cursor: pointer;
+  box-shadow: 2px 2px 0 var(--ink);
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+.sub-tab:hover { transform: translate(-1px,-1px); box-shadow: 3px 3px 0 var(--ink); }
+.sub-tab.active {
+  background: var(--sky);
+  color: var(--ink);
+  transform: translate(1px,1px);
+  box-shadow: 1px 1px 0 var(--ink);
+}
+
+/* ── 버튼 ── */
+button { font-family: inherit; cursor: pointer; border: none; }
+.btn-add {
+  background: var(--coral);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 700;
+  padding: 8px 16px;
+  border: 2.5px solid var(--ink);
+  border-radius: 14px;
+  box-shadow: 3px 3px 0 var(--ink);
+  transition: transform 0.1s, box-shadow 0.1s;
+  white-space: nowrap;
+}
+.btn-add:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 var(--ink); }
+.btn-add:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 var(--ink); }
+
+.btn-save {
+  background: var(--mint);
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 700;
+  padding: 10px 20px;
+  border: 2.5px solid var(--ink);
+  border-radius: 14px;
+  box-shadow: 3px 3px 0 var(--ink);
+}
+.btn-save:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 var(--ink); }
+
+.btn-cancel {
+  background: white;
+  color: var(--ink2);
+  font-size: 14px;
+  font-weight: 700;
+  padding: 10px 20px;
+  border: 2px solid #ccc;
+  border-radius: 14px;
+}
+.btn-del {
+  background: var(--pink);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 700;
+  padding: 10px 16px;
+  border: 2px solid var(--ink);
+  border-radius: 14px;
+}
+
+/* ── 콘텐츠 카드 ── */
+.content-card {
+  background: white;
+  border: 2.5px solid var(--ink);
+  border-radius: 24px;
+  padding: 18px 16px;
+  box-shadow: 5px 5px 0 var(--ink);
+}
+
+/* ── 일정 테이블 ── */
+.schedule-table { width:100%; border-collapse:collapse; font-size:11px; table-layout:fixed; }
+.schedule-table th {
+  padding: 8px 3px;
+  text-align: center;
+  font-weight: 900;
+  font-size: 11px;
+  color: var(--ink);
+  border-bottom: 2px solid var(--ink);
+}
+.schedule-table td { vertical-align:top; padding:2px; border-top:1px dashed #ddd; }
+.time-label { font-size:10px; color:#aaa; text-align:right; padding-right:6px !important; white-space:nowrap; width:44px; font-weight:700; }
+
+/* 일정 카드 — 스티커 스타일 */
+.ev-card {
+  border-radius: 12px;
+  padding: 4px 7px;
+  margin: 2px 0;
+  cursor: pointer;
+  border: 2px solid var(--ink);
+  box-shadow: 2px 2px 0 var(--ink);
+  transition: transform 0.1s, box-shadow 0.1s;
+  position: relative;
+}
+.ev-card:hover { transform: translate(-1px,-1px); box-shadow: 3px 3px 0 var(--ink); }
+.ev-card:active { transform: translate(1px,1px); box-shadow: 1px 1px 0 var(--ink); }
+.ev-card .ename { font-size:11px; font-weight:700; display:block; color: var(--ink); }
+.ev-card .enote { font-size:9px; color: var(--ink2); margin-top:1px; display:block; opacity:0.85; }
+
+.add-mini {
+  width:100%;
+  background: transparent;
+  border: 1.5px dashed #ccc;
+  border-radius: 8px;
+  padding: 2px;
+  color: #ccc;
+  font-size:11px;
+  margin-top:1px;
+  cursor:pointer;
+  font-family:inherit;
+  font-weight:700;
+  transition: all 0.15s;
+}
+.add-mini:hover { border-color: var(--coral); color: var(--coral); background: #fff5f5; }
+
+/* 요일별 보기 */
+.day-view { max-width: 400px; }
+.day-row { display:flex; gap:10px; margin-bottom:8px; align-items:flex-start; }
+.day-time { font-size:11px; color:#aaa; min-width:58px; padding-top:6px; text-align:right; font-weight:700; }
+
+/* ── 학교 일정 ── */
+.school-section { margin-bottom:28px; }
+.section-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 900;
+  color: var(--ink);
+  background: var(--lemon);
+  border: 2px solid var(--ink);
+  border-radius: 12px;
+  padding: 5px 14px;
+  margin-bottom: 14px;
+  box-shadow: 3px 3px 0 var(--ink);
+}
+
+.school-ev {
+  display:flex;
+  gap:12px;
+  align-items:flex-start;
+  padding: 10px 14px;
+  border-radius: 16px;
+  border: 2px solid var(--ink);
+  background: white;
+  margin-bottom: 8px;
+  box-shadow: 3px 3px 0 var(--ink);
+  transition: transform 0.1s;
+}
+.school-ev:hover { transform: translate(-1px,-1px); }
+.date-sticker {
+  min-width: 50px;
+  text-align: center;
+  border: 2px solid var(--ink);
+  border-radius: 10px;
+  padding: 5px 4px;
+  font-size: 11px;
+  font-weight: 900;
+  line-height: 1.4;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+.ev-title2 { font-size:14px; font-weight:700; color:var(--ink); }
+.ev-desc2  { font-size:11px; color:var(--ink2); margin-top:2px; }
+
+.subject-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(190px,1fr)); gap:10px; }
+.subject-card {
+  border: 2px solid var(--ink);
+  border-radius: 16px;
+  padding: 12px;
+  box-shadow: 3px 3px 0 var(--ink);
+}
+.subject-card .stitle { font-size:12px; font-weight:900; margin-bottom:7px; }
+.subject-card .sbody  { font-size:11px; color:var(--ink2); line-height:1.7; }
+
+.class-table { width:100%; border-collapse:collapse; font-size:11px; }
+.class-table th { padding:8px 4px; text-align:center; font-weight:900; border-bottom:2px solid var(--ink); }
+.class-table td { padding:6px 4px; text-align:center; border-top:1px dashed #ddd; color:var(--ink2); }
+.class-table tr:hover td { background:#fffbf0; }
+.period-th { color:#aaa; font-size:10px; font-weight:700; }
+.cls-pill {
+  display:inline-block;
+  border-radius:8px;
+  padding:2px 7px;
+  font-size:10px;
+  font-weight:700;
+  border: 1.5px solid var(--ink);
+}
+
+/* ── 급식/간식 ── */
+.meal-week {
+  font-size: 13px;
+  font-weight: 900;
+  color: var(--ink);
+  margin: 18px 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.meal-week::after {
+  content: '';
+  flex: 1;
+  border-bottom: 2px dashed #ddd;
+}
+.meal-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(145px,1fr)); gap:10px; }
+.meal-card {
+  border: 2px solid var(--ink);
+  border-radius: 16px;
+  padding: 11px;
+  box-shadow: 3px 3px 0 var(--ink);
+  background: white;
+}
+.meal-date {
+  font-size: 11px;
+  font-weight: 900;
+  color: var(--ink);
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1.5px dashed #eee;
+}
+.meal-item { font-size: 11px; color: var(--ink2); padding: 2px 0; line-height:1.5; }
+.meal-holiday {
+  background: var(--pink);
+  border: 1.5px solid var(--ink);
+  border-radius: 10px;
+  padding: 6px 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink);
+  text-align: center;
+}
+
+/* ── 모달 ── */
+.overlay {
+  display:none; position:fixed; top:0;left:0;right:0;bottom:0;
+  background:rgba(61,44,44,0.45); z-index:9999;
+  align-items:flex-start; justify-content:center;
+  overflow-y:auto; padding: 40px 16px;
+  -webkit-overflow-scrolling: touch;
+}
+.overlay.open { display:flex; }
+.modal {
+  background: var(--cream);
+  border: 3px solid var(--ink);
+  border-radius: 24px;
+  padding: 24px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 6px 6px 0 var(--ink);
+  margin: auto;
+}
+.modal h2 { font-size:18px; font-weight:900; margin-bottom:16px; color:var(--ink); }
+.field { margin-bottom:12px; }
+.field label { display:block; font-size:12px; color:var(--ink2); margin-bottom:4px; font-weight:700; }
+.field input, .field select {
+  width:100%; padding:9px 12px;
+  font-size:14px; font-family:inherit;
+  border: 2px solid var(--ink);
+  border-radius: 12px;
+  background: white;
+  color: var(--ink);
+  outline: none;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+.field input:focus { background: var(--lemon); }
+.color-picker { display:flex; gap:8px; flex-wrap:wrap; }
+.color-dot {
+  width:26px; height:26px; border-radius:50%;
+  cursor:pointer; border: 2.5px solid var(--ink);
+  box-shadow: 2px 2px 0 var(--ink);
+  transition: transform 0.1s;
+}
+.color-dot:hover { transform: scale(1.15); }
+.color-dot.selected { transform: scale(1.2); box-shadow: 3px 3px 0 var(--ink); }
+.modal-actions { display:flex; gap:8px; justify-content:flex-end; margin-top:16px; flex-wrap:wrap; }
+.empty { text-align:center; color:#bbb; font-size:14px; padding:28px 0; }
+
+/* 떠다니는 배경 장식 */
+.float-deco {
+  position: fixed;
+  display: none;
+  pointer-events: none;
+  font-size: 28px;
+  opacity: 0.12;
+  z-index: 0;
+  animation: floatUp 12s ease-in-out infinite;
+}
+@keyframes floatUp {
+  0%,100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(10deg); }
+}
+
+@media (max-width: 480px) {
+  .app-header h1 { font-size: 18px; }
+  .content-card { padding: 12px 10px; border-radius: 18px; }
+  .main-tab { font-size: 12px; padding: 10px 4px 8px; }
+  .tab-icon { font-size: 18px; }
+  .schedule-table { font-size: 10px; }
+  .ev-card .ename { font-size: 10px; }
+  .meal-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
+  .subject-grid { grid-template-columns: 1fr; }
+  .modal { padding: 18px 14px; }
+}
+</style>
+</head>
+<body>
+
+<div class="float-deco" style="top:8%;left:4%;animation-delay:0s">🌸</div>
+<div class="float-deco" style="top:20%;right:5%;animation-delay:2s">⭐</div>
+<div class="float-deco" style="top:60%;left:2%;animation-delay:4s">🍀</div>
+<div class="float-deco" style="top:75%;right:3%;animation-delay:6s">🌈</div>
+<div class="float-deco" style="top:45%;left:96%;animation-delay:3s">🎀</div>
+
+<div class="container" style="position:relative;z-index:1">
+
+  <div class="app-header">
+    <div class="header-badge">
+      <span class="deco-star" style="top:-12px;left:-14px">✦</span>
+      <span class="deco-star" style="top:-10px;right:-12px;animation-direction:reverse;font-size:14px">✦</span>
+      <h1><span class="deco-bounce">🦁</span> 이주니 일정표</h1>
+      <p>SKIE Black Orca · 2026년 5월 ✨</p>
+    </div>
+  </div>
+
+  <!-- 메인 탭 -->
+  <div class="main-tabs">
+    <button class="main-tab t-schedule active" onclick="switchMain('schedule')"><span class="tab-icon">📅</span>주간일정</button>
+    <button class="main-tab t-school"          onclick="switchMain('school')"><span class="tab-icon">🏫</span>학교일정</button>
+    <button class="main-tab t-lunch"           onclick="switchMain('lunch')"><span class="tab-icon">🍱</span>급식표</button>
+    <button class="main-tab t-snack"           onclick="switchMain('snack')"><span class="tab-icon">🥨</span>간식표</button>
+  </div>
+
+  <!-- 주간일정 -->
+  <div id="page-schedule">
+    <div class="sub-row">
+      <div id="subTabs" style="display:flex;gap:6px;flex-wrap:wrap;flex:1"></div>
+      <button class="btn-add" onclick="openAddModal(null)">＋ 추가</button>
+    </div>
+    <div class="content-card" id="scheduleArea"></div>
+  </div>
+
+  <!-- 학교일정 -->
+  <div id="page-school" style="display:none">
+    <div class="content-card">
+
+      <div class="school-section">
+        <div class="section-title">📌 5월 주요 행사</div>
+        <div class="school-ev"><div class="date-sticker" style="background:var(--peach)">5/1<br>금</div><div><div class="ev-title2">🌿 근로자의 날 · 현장학습</div><div class="ev-desc2">Children's Day Fieldtrip</div></div></div>
+        <div class="school-ev"><div class="date-sticker" style="background:var(--sky)">5/4<br>월</div><div><div class="ev-title2">🔴 재량 휴업일</div><div class="ev-desc2">학교 쉬는 날</div></div></div>
+        <div class="school-ev"><div class="date-sticker" style="background:var(--pink)">5/5<br>화</div><div><div class="ev-title2">🎠 어린이날!</div><div class="ev-desc2">Children's Day Holiday</div></div></div>
+        <div class="school-ev"><div class="date-sticker" style="background:var(--mint)">5/13<br>수</div><div><div class="ev-title2">👨‍👩‍👧 오픈 클래스</div><div class="ev-desc2">학부모 참관 수업</div></div></div>
+        <div class="school-ev"><div class="date-sticker" style="background:var(--lilac)">5/25<br>월</div><div><div class="ev-title2">🪷 부처님 오신 날</div><div class="ev-desc2">Buddha's Birthday Holiday</div></div></div>
+        <div class="school-ev"><div class="date-sticker" style="background:var(--lemon)">5/27<br>수</div><div><div class="ev-title2">🛒 마켓 데이</div><div class="ev-desc2">Market Day</div></div></div>
+      </div>
+
+      <div class="school-section">
+        <div class="section-title">📚 5월 수업 내용</div>
+        <div class="subject-grid">
+          <div class="subject-card" style="background:var(--sky)"><div class="stitle">🧠 Critical Thinking</div><div class="sbody">Theme: My Body<br>Grammar: 대명사→전치사<br>Playfacto: 도형 비교<br>Flying Apple: 봄 이야기</div></div>
+          <div class="subject-card" style="background:var(--mint)"><div class="stitle">💬 Communication</div><div class="sbody">Storybook: Dancing Princesses<br>CCSS: Eagles → Wolf<br>Writing: 서술형 글쓰기<br>Vocab: 갈등 표현</div></div>
+          <div class="subject-card" style="background:var(--pink)"><div class="stitle">🤝 Collaboration</div><div class="sbody">PE: 농구→훌라후프→하키<br>다문화: Malaysia<br>인성: Trust 신뢰</div></div>
+          <div class="subject-card" style="background:var(--lemon)"><div class="stitle">🎨 Creativity</div><div class="sbody">Art: My House → Seoul Skyline<br>Cooking: Parfait 🍨</div></div>
+        </div>
+      </div>
+
+      <div class="school-section">
+        <div class="section-title">🗓 주간 수업 시간표</div>
+        <div style="overflow-x:auto">
+        <table class="class-table">
+          <thead><tr>
+            <th class="period-th" style="width:56px">교시</th>
+            <th>월</th><th>화</th><th>수</th><th>목</th><th>금</th>
+          </tr></thead>
+          <tbody>
+            <tr><td class="period-th">1교시<br>9:00</td><td>DEAR</td><td>Character Ed</td><td>Theme</td><td>Grammar</td><td><span class="cls-pill" style="background:var(--sky)">Morning Mtg</span></td></tr>
+            <tr><td class="period-th">2교시<br>9:40</td><td>Writing</td><td>SKIE Facto</td><td>CCSS</td><td>Theme</td><td>Spelling</td></tr>
+            <tr><td class="period-th">3교시<br>10:30</td><td>CCSS</td><td>CLIL</td><td>Vocabulary</td><td>CCSS</td><td>CCSS</td></tr>
+            <tr><td class="period-th">4교시<br>11:20</td><td>Theme</td><td>Storybook</td><td>Storybook</td><td>Storybook</td><td>Vocabulary</td></tr>
+            <tr><td class="period-th">5교시<br>1:00</td><td>CLIL</td><td>Grammar</td><td>Grammar</td><td>Flying Apple</td><td>SKIE Facto</td></tr>
+            <tr><td class="period-th">6교시<br>1:45</td><td>PBL</td><td><span class="cls-pill" style="background:var(--mint)">PE 🏃</span></td><td><span class="cls-pill" style="background:var(--lemon)">Art 🎨</span></td><td>PBL</td><td><span class="cls-pill" style="background:var(--pink)">Playroom</span></td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 급식표 -->
+  <div id="page-lunch" style="display:none">
+    <div class="content-card">
+      <p style="font-size:11px;color:#aaa;margin-bottom:14px;font-weight:700">📋 2026년 5월 중식 (주제이엠푸드)</p>
+
+      <div class="meal-week">1주차</div>
+      <div class="meal-grid">
+        <div class="meal-card"><div class="meal-date">5/1 (금)</div><div class="meal-holiday">🌿 현장학습일</div></div>
+      </div>
+
+      <div class="meal-week">2주차 (5/4~5/8)</div>
+      <div class="meal-grid">
+        <div class="meal-card"><div class="meal-date">5/4 (월)</div><div class="meal-holiday">🔴 재량휴업</div></div>
+        <div class="meal-card"><div class="meal-date">5/5 (화)</div><div class="meal-holiday">🎠 어린이날</div></div>
+        <div class="meal-card"><div class="meal-date" style="color:#185FA5">5/6 (수)</div><div class="meal-item">쌀밥</div><div class="meal-item">배추된장국</div><div class="meal-item">산적데리야끼구이</div><div class="meal-item">표고버섯볶음</div><div class="meal-item">무생채</div><div class="meal-item">배추김치</div></div>
+        <div class="meal-card"><div class="meal-date" style="color:#185FA5">5/7 (목)</div><div class="meal-item">쌀밥</div><div class="meal-item">참치김치찌개</div><div class="meal-item">동그랑땡전&케찹</div><div class="meal-item">시금치나물</div><div class="meal-item">우엉조림</div><div class="meal-item">깍두기</div></div>
+        <div class="meal-card"><div class="meal-date" style="color:#185FA5">5/8 (금)</div><div class="meal-item">쌀밥</div><div class="meal-item">조개살미역국</div><div class="meal-item">우삼겹숙주볶음</div><div class="meal-item">두부스틱볶음</div><div class="meal-item">브로콜리&초장</div><div class="meal-item">배추김치</div></div>
+      </div>
+
+      <div class="meal-week">3주차 (5/11~5/15)</div>
+      <div class="meal-grid">
+        <div class="meal-card"><div class="meal-date">5/11 (월)</div><div class="meal-item">쌀밥</div><div class="meal-item">북어국</div><div class="meal-item">사태계란장조림</div><div class="meal-item">단호박튀김</div><div class="meal-item">쑥갓무침</div><div class="meal-item">배추김치</div></div>
+        <div class="meal-card"><div class="meal-date">5/12 (화)</div><div class="meal-item">쌀밥</div><div class="meal-item">건새우아욱된장국</div><div class="meal-item">오리훈제볶음</div><div class="meal-item">새송이조림</div><div class="meal-item">매실청깻잎지</div><div class="meal-item">깍두기</div></div>
+        <div class="meal-card"><div class="meal-date">5/13 (수)</div><div class="meal-item">쌀밥</div><div class="meal-item">혼합탕</div><div class="meal-item">돈채피망볶음</div><div class="meal-item">알감자매콤조림</div><div class="meal-item">부추무침</div><div class="meal-item">배추김치</div></div>
+        <div class="meal-card"><div class="meal-date">5/14 (목)</div><div class="meal-item">쌀밥</div><div class="meal-item">소고기무국</div><div class="meal-item">햄전</div><div class="meal-item">잡채어묵고추장볶음</div><div class="meal-item">김자반</div><div class="meal-item">배추김치</div></div>
+        <div class="meal-card"><div class="meal-date">5/15 (금)</div><div class="meal-item">쌀밥</div><div class="meal-item">팽이된장국</div><div class="meal-item">닭살스테이크</div><div class="meal-item">배추나물</div><div class="meal-item">마라무찜지채</div><div class="meal-item">깍두기</div></div>
+      </div>
+
+      <div class="meal-week">4주차 (5/18~5/22)</div>
+      <div class="meal-grid">
+        <div class="meal-card"><div class="meal-date">5/18 (월)</div><div class="meal-item">쌀밥</div><div class="meal-item">버섯매운탕</div><div class="meal-item">계란스크램블</div><div class="meal-item">맛살야채볶음</div><div class="meal-item">아몬드멸치조림</div><div class="meal-item">배추김치</div></div>
+        <div class="meal-card"><div class="meal-date">5/19 (화)</div><div class="meal-item">쌀밥</div><div class="meal-item">된장찌개</div><div class="meal-item">치킨너겟</div><div class="meal-item">근대나물</div><div class="meal-item">도토리묵무침</div><div class="meal-item">배추김치</div></div>
+        <div class="meal-card"><div class="meal-date">5/20 (수)</div><div class="meal-item">쌀밥</div><div class="meal-item">호박새우젓국</div><div class="meal-item">묵은지돼지고기찜</div><div class="meal-item">완자림</div><div class="meal-item">연두부&양념장</div><div class="meal-item">깍두기</div></div>
+        <div class="meal-card"><div class="meal-date">5/21 (목)</div><div class="meal-item">쌀밥</div><div class="meal-item">두부김치국</div><div class="meal-item">너비아니구이</div><div class="meal-item">단호박샐러드</div><div class="meal-item">취나물무침</div><div class="meal-item">깍두기</div></div>
+        <div class="meal-card"><div class="meal-date">5/22 (금)</div><div class="meal-item">쌀밥</div><div class="meal-item">감자다시마국</div><div class="meal-item">계란옷입은깻잎전</div><div class="meal-item">참치야채볶음</div><div class="meal-item">청경채무침</div><div class="meal-item">배추김치</div></div>
+      </div>
+
+      <div class="meal-week">5주차 (5/25~5/29)</div>
+      <div class="meal-grid">
+        <div class="meal-card"><div class="meal-date">5/25 (월)</div><div class="meal-holiday">🪷 부처님오신날</div></div>
+        <div class="meal-card"><div class="meal-date">5/26 (화)</div><div class="meal-item">쌀밥</div><div class="meal-item">시금치된장국</div><div class="meal-item">스팸구이</div><div class="meal-item">양념김</div><div class="meal-item">컬리플라워볶음</div><div class="meal-item">배추김치</div></div>
+        <div class="meal-card"><div class="meal-date">5/27 (수)</div><div class="meal-item">쌀밥</div><div class="meal-item">사골곰탕</div><div class="meal-item">닭안심장조림</div><div class="meal-item">가지나물</div><div class="meal-item">오징어젓</div><div class="meal-item">배추김치</div></div>
+        <div class="meal-card"><div class="meal-date">5/28 (목)</div><div class="meal-item">쌀밥</div><div class="meal-item">쑥갓조개살탕</div><div class="meal-item">별완자조림</div><div class="meal-item">연근흑임자무침</div><div class="meal-item">오징어젓</div><div class="meal-item">깍두기</div></div>
+        <div class="meal-card"><div class="meal-date">5/29 (금)</div><div class="meal-item">쌀밥</div><div class="meal-item">우거지된장국</div><div class="meal-item">두부구이&양념장</div><div class="meal-item">명태무침</div><div class="meal-item">버섯곤약조림</div><div class="meal-item">배추김치</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 간식표 -->
+  <div id="page-snack" style="display:none">
+    <div class="content-card">
+      <p style="font-size:11px;color:#aaa;margin-bottom:14px;font-weight:700">🥨 2026년 5월 오전 간식 (SKIE)</p>
+
+      <div class="meal-week">1주차</div>
+      <div class="meal-grid">
+        <div class="meal-card"><div class="meal-date">5/1 (금)</div><div class="meal-item">시리얼 30g</div><div class="meal-item">꼬마약과</div><div class="meal-item">흰 우유 200ml</div></div>
+      </div>
+
+      <div class="meal-week">2주차 (5/4~5/8)</div>
+      <div class="meal-grid">
+        <div class="meal-card"><div class="meal-date">5/4 (월)</div><div class="meal-holiday">🔴 대체휴일</div></div>
+        <div class="meal-card"><div class="meal-date">5/5 (화)</div><div class="meal-holiday">🎠 어린이날</div></div>
+        <div class="meal-card"><div class="meal-date">5/6 (수)</div><div class="meal-item">야채스틱</div><div class="meal-item">미니츄러스</div><div class="meal-item">포도주스 100ml</div></div>
+        <div class="meal-card"><div class="meal-date">5/7 (목)</div><div class="meal-item">군만두</div><div class="meal-item">미니츄러스</div><div class="meal-item">포도주스 100ml</div></div>
+        <div class="meal-card"><div class="meal-date">5/8 (금)</div><div class="meal-item">시리얼 30g</div><div class="meal-item">미니 치즈볼</div><div class="meal-item">흰 우유 200ml</div></div>
+      </div>
+
+      <div class="meal-week">3주차 (5/11~5/15)</div>
+      <div class="meal-grid">
+        <div class="meal-card"><div class="meal-date">5/11 (월)</div><div class="meal-item">한입 카스테라</div><div class="meal-item">푸딩</div><div class="meal-item">한라봉주스 100ml</div></div>
+        <div class="meal-card"><div class="meal-date">5/12 (화)</div><div class="meal-item">다코야끼</div><div class="meal-item">꼬마약과</div><div class="meal-item">한라봉주스 100ml</div></div>
+        <div class="meal-card"><div class="meal-date">5/13 (수)</div><div class="meal-item">요플레</div><div class="meal-item">미니사과쿠키</div><div class="meal-item">요구르트 65ml</div></div>
+        <div class="meal-card"><div class="meal-date">5/14 (목)</div><div class="meal-item">밀크 볼 16g</div><div class="meal-item">삼각 초코스틱</div><div class="meal-item">요구르트 65ml</div></div>
+        <div class="meal-card"><div class="meal-date">5/15 (금)</div><div class="meal-item">시리얼 30g</div><div class="meal-item">오트밀비니바이트</div><div class="meal-item">흰 우유 200ml</div></div>
+      </div>
+
+      <div class="meal-week">4주차 (5/18~5/22)</div>
+      <div class="meal-grid">
+        <div class="meal-card"><div class="meal-date">5/18 (월)</div><div class="meal-item">요플레</div><div class="meal-item">미니사과쿠키</div><div class="meal-item">요구르트 65ml</div></div>
+        <div class="meal-card"><div class="meal-date">5/19 (화)</div><div class="meal-item">쌀찐빵</div><div class="meal-item">건과류</div><div class="meal-item">애플 주스 100ml</div></div>
+        <div class="meal-card"><div class="meal-date">5/20 (수)</div><div class="meal-item">제철과일 60g</div><div class="meal-item">건과류</div><div class="meal-item">애플 주스 100ml</div></div>
+        <div class="meal-card"><div class="meal-date">5/21 (목)</div><div class="meal-item">츄러스</div><div class="meal-item">건과류</div><div class="meal-item">한라봉주스 100ml</div></div>
+        <div class="meal-card"><div class="meal-date">5/22 (금)</div><div class="meal-item">시리얼 30g</div><div class="meal-item">미니사과쿠키</div><div class="meal-item">흰 우유 200ml</div></div>
+      </div>
+
+      <div class="meal-week">5주차 (5/25~5/29)</div>
+      <div class="meal-grid">
+        <div class="meal-card"><div class="meal-date">5/25 (월)</div><div class="meal-holiday">🪷 대체휴일</div></div>
+        <div class="meal-card"><div class="meal-date">5/26 (화)</div><div class="meal-item">요플레</div><div class="meal-item">미니사과쿠키</div><div class="meal-item">요구르트 65ml</div></div>
+        <div class="meal-card"><div class="meal-date">5/27 (수)</div><div class="meal-item">제철과일 60g</div><div class="meal-item">건과류</div><div class="meal-item">애플 주스 100ml</div></div>
+        <div class="meal-card"><div class="meal-date">5/28 (목)</div><div class="meal-item">치즈볼 154g</div><div class="meal-item">올무 보리과자</div><div class="meal-item">요구르트 50ml</div></div>
+        <div class="meal-card"><div class="meal-date">5/29 (금)</div><div class="meal-item">시리얼 30g</div><div class="meal-item">오트밀비니바이트</div><div class="meal-item">흰 우유 200ml</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 모달 -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <h2 id="modalTitle">✏️ 일정 추가</h2>
+    <div class="field"><label>요일</label><select id="fDay"></select></div>
+    <div class="field"><label>일정 이름</label><input type="text" id="fName" placeholder="예: 🎻 바이올린"/></div>
+    <div class="field"><label>시간</label><input type="text" id="fTime" placeholder="예: 14:30~15:30"/></div>
+    <div class="field"><label>메모 (선택)</label><input type="text" id="fNote" placeholder="예: 소래음"/></div>
+    <div class="field"><label>색깔 🎨</label><div class="color-picker" id="colorPicker"></div></div>
+    <div class="modal-actions">
+      <button class="btn-del" id="deleteBtn" onclick="deleteEvent()" style="display:none">🗑 삭제</button>
+      <button class="btn-cancel" onclick="closeModal()">취소</button>
+      <button class="btn-save" onclick="saveEvent()">저장 ✓</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const DAYS=['월요일','화요일','수요일','목요일','금요일','토요일','일요일'];
+const TIMES=['8:40','9:00','14:30','15:00','16:00','16:30','17:00','18:10'];
+const COLORS=[
+  {id:'lemon',  bg:'#FFF3B0',text:'#5a4a00'},
+  {id:'pink',   bg:'#FFD6E0',text:'#7a2040'},
+  {id:'mint',   bg:'#C8F0E0',text:'#1a5a3a'},
+  {id:'sky',    bg:'#C8E8FF',text:'#1a3a6a'},
+  {id:'lilac',  bg:'#E8D6FF',text:'#4a2a7a'},
+  {id:'peach',  bg:'#FFE4CC',text:'#7a3a10'},
+  {id:'coral',  bg:'#FFB3A0',text:'#7a2010'},
+];
+
+let events=[
+  {id:1,day:'월요일',name:'🏫 등원',time:'8:40',note:'',color:'sky'},
+  {id:2,day:'화요일',name:'🏫 등원',time:'8:40',note:'',color:'sky'},
+  {id:3,day:'수요일',name:'🏫 등원',time:'8:40',note:'',color:'sky'},
+  {id:4,day:'목요일',name:'🏫 등원',time:'8:40',note:'',color:'sky'},
+  {id:5,day:'금요일',name:'🏫 등원',time:'8:40',note:'',color:'sky'},
+  {id:6,day:'토요일',name:'🤿 스쿠버',time:'9:00~11:00',note:'',color:'mint'},
+  {id:7,day:'월요일',name:'🎻 바이올린',time:'14:30~15:30',note:'소래음',color:'lilac'},
+  {id:8,day:'화요일',name:'🎹 이화뮤뮤',time:'15:00~16:00',note:'시애틀→이화뮤뮤→필즈',color:'pink'},
+  {id:9,day:'수요일',name:'🎨 MTA',time:'14:30~15:30',note:'시애틀→MTA→이화뮤뮤',color:'peach'},
+  {id:10,day:'목요일',name:'🎨 아토아트',time:'14:40~16:30',note:'',color:'lemon'},
+  {id:11,day:'금요일',name:'🏫 방과후',time:'14:30~16:30',note:'',color:'sky'},
+  {id:12,day:'월요일',name:'🎹 이화뮤뮤',time:'16:00~17:00',note:'→ 도농초',color:'pink'},
+  {id:13,day:'화요일',name:'✏️ 필즈',time:'16:10~18:00',note:'→ 도농초앞',color:'lilac'},
+  {id:14,day:'수요일',name:'🎹 이화뮤뮤',time:'16:00~17:00',note:'→ 도농초',color:'pink'},
+  {id:15,day:'목요일',name:'⚽ 축구',time:'17:00~18:30',note:'',color:'mint'},
+  {id:16,day:'금요일',name:'🎨 MTA',time:'16:30~17:30',note:'시애틀→MTA→도농초',color:'peach'},
+  {id:17,day:'월요일',name:'🚌 뮤뮤버스',time:'18:10',note:'도농초 5시5분',color:'coral'},
+  {id:18,day:'화요일',name:'🚌 뮤뮤버스',time:'18:10',note:'도농초 6시5분',color:'coral'},
+  {id:19,day:'수요일',name:'🚌 뮤뮤버스',time:'18:10',note:'도농초 6시10분',color:'coral'},
+  {id:20,day:'금요일',name:'🚌 도농초버스',time:'18:10',note:'',color:'coral'},
+];
+let nextId=21,currentSub='전체',editingId=null,selectedColor='sky';
+
+function getColor(id){return COLORS.find(c=>c.id===id)||COLORS[0];}
+function switchMain(p){
+  ['schedule','school','lunch','snack'].forEach(x=>{document.getElementById('page-'+x).style.display=x===p?'block':'none';});
+  document.querySelectorAll('.main-tab').forEach((b,i)=>{b.classList.toggle('active',['schedule','school','lunch','snack'][i]===p);});
+}
+function saveToStorage(){localStorage.setItem('skie2_ev',JSON.stringify(events));localStorage.setItem('skie2_id',nextId);}
+function loadFromStorage(){const s=localStorage.getItem('skie2_ev');if(s){events=JSON.parse(s);nextId=parseInt(localStorage.getItem('skie2_id'))||21;}}
+function renderSubTabs(){
+  document.getElementById('subTabs').innerHTML=['전체',...DAYS].map(t=>
+    `<button class="sub-tab ${currentSub===t?'active':''}" onclick="setSub('${t}')">${t}</button>`).join('');
+}
+function setSub(t){currentSub=t;renderSubTabs();renderSchedule();}
+function renderSchedule(){
+  const a=document.getElementById('scheduleArea');
+  currentSub==='전체'?renderFull(a):renderDay(a,currentSub);
+}
+function renderFull(area){
+  let h=`<div style="overflow-x:auto"><table class="schedule-table"><thead><tr><th style="width:44px;background:transparent"></th>`;
+  DAYS.forEach(d=>h+=`<th>${d}</th>`);
+  h+=`</tr></thead><tbody>`;
+  TIMES.forEach(time=>{
+    const has=DAYS.some(d=>events.some(e=>e.day===d&&e.time.startsWith(time)));
+    if(!has)return;
+    h+=`<tr><td class="time-label">${time}</td>`;
+    DAYS.forEach(d=>{
+      const evs=events.filter(e=>e.day===d&&e.time.startsWith(time));
+      h+=`<td>`;
+      evs.forEach(ev=>{const c=getColor(ev.color);h+=`<div class="ev-card" style="background:${c.bg}" onclick="openEdit(${ev.id})"><span class="ename">${ev.name}</span>${ev.note?`<span class="enote">${ev.note}</span>`:''}</div>`;});
+      h+=`<button class="add-mini" onclick="openAddModal('${d}')">＋</button></td>`;
+    });
+    h+=`</tr>`;
+  });
+  h+=`</tbody></table></div>`;
+  area.innerHTML=h;
+}
+function renderDay(area,day){
+  const evs=events.filter(e=>e.day===day).sort((a,b)=>parseInt(a.time.split('~')[0].replace(':',''))-parseInt(b.time.split('~')[0].replace(':','')));
+  let h=`<div class="day-view">`;
+  if(!evs.length){h+=`<div class="empty">📭 일정 없음<br><br><button class="btn-add" onclick="openAddModal('${day}')">＋ 추가</button></div>`;}
+  else{
+    evs.forEach(ev=>{const c=getColor(ev.color);h+=`<div class="day-row"><div class="day-time">${ev.time}</div><div class="ev-card" style="background:${c.bg};flex:1" onclick="openEdit(${ev.id})"><span class="ename">${ev.name}</span>${ev.note?`<span class="enote">${ev.note}</span>`:''}</div></div>`;});
+    h+=`<div style="margin-top:12px"><button class="btn-add" style="width:100%" onclick="openAddModal('${day}')">＋ 이 날 일정 추가</button></div>`;
+  }
+  h+=`</div>`;area.innerHTML=h;
+}
+function openAddModal(day){
+  editingId=null;
+  document.getElementById('modalTitle').textContent='✏️ 일정 추가';
+  document.getElementById('deleteBtn').style.display='none';
+  buildDaySelect(day||'월요일');
+  ['fName','fTime','fNote'].forEach(id=>document.getElementById(id).value='');
+  buildColorPicker('sky');
+  document.getElementById('overlay').classList.add('open');
+}
+function openEdit(id){
+  const ev=events.find(e=>e.id===id);if(!ev)return;
+  editingId=id;
+  document.getElementById('modalTitle').textContent='✏️ 일정 수정';
+  document.getElementById('deleteBtn').style.display='inline-block';
+  buildDaySelect(ev.day);
+  document.getElementById('fName').value=ev.name;
+  document.getElementById('fTime').value=ev.time;
+  document.getElementById('fNote').value=ev.note;
+  buildColorPicker(ev.color);
+  document.getElementById('overlay').classList.add('open');
+}
+function closeModal(){document.getElementById('overlay').classList.remove('open');}
+document.getElementById('overlay').addEventListener('click',function(e){if(e.target===this)closeModal();});
+function buildDaySelect(sel){document.getElementById('fDay').innerHTML=DAYS.map(d=>`<option value="${d}" ${d===sel?'selected':''}>${d}</option>`).join('');}
+function buildColorPicker(sel){
+  selectedColor=sel;
+  document.getElementById('colorPicker').innerHTML=COLORS.map(c=>
+    `<div class="color-dot ${selectedColor===c.id?'selected':''}" style="background:${c.bg}" onclick="pickColor('${c.id}')"></div>`).join('');
+}
+function pickColor(id){selectedColor=id;buildColorPicker(id);}
+function saveEvent(){
+  const day=document.getElementById('fDay').value,name=document.getElementById('fName').value.trim(),time=document.getElementById('fTime').value.trim(),note=document.getElementById('fNote').value.trim();
+  if(!name){alert('이름을 입력해줘요! 🥺');return;}
+  if(editingId){const i=events.findIndex(e=>e.id===editingId);if(i>-1)events[i]={id:editingId,day,name,time,note,color:selectedColor};}
+  else events.push({id:nextId++,day,name,time,note,color:selectedColor});
+  saveToStorage();closeModal();renderSchedule();
+}
+function deleteEvent(){
+  if(!editingId||!confirm('이 일정 지울까요? 🥺'))return;
+  events=events.filter(e=>e.id!==editingId);
+  saveToStorage();closeModal();renderSchedule();
+}
+loadFromStorage();renderSubTabs();renderSchedule();
+</script>
+</body>
+</html>
