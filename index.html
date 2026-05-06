@@ -326,7 +326,7 @@ button{font-family:inherit;cursor:pointer;border:none;}
   </div>
 </div>
 
-<script>
+<script type="module">
 // ── 기본 데이터 ──
 const DAYS_KO = ['일요일','월요일','화요일','수요일','목요일','금요일','토요일'];
 const DAYS_SHORT = ['일','월','화','수','목','금','토'];
@@ -692,7 +692,7 @@ function saveEvent(){
   } else {
     events.push({id:nextId++,date,name,time,note,color:selectedColor});
   }
-  saveToStorage();
+  saveToFirebase();
   closeModal();
   renderSchedule();
   if(currentMain==='monthly'){
@@ -704,13 +704,51 @@ function saveEvent(){
 function deleteEvent(){
   if(!editingId||!confirm('이 일정 지울까요? 🥺'))return;
   events=events.filter(e=>e.id!==editingId);
-  saveToStorage();closeModal();
+  saveToFirebase();closeModal();
   renderSchedule();
   if(currentMain==='monthly'){renderCalendar();if(selectedDate)renderDateDetail(selectedDate);}
 }
 
-// 시작
-loadFromStorage();
+// Firebase 초기화
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDyKzATHiizXmFX88e60p_9PV2DZjwmcbM",
+  authDomain: "ljschedule.firebaseapp.com",
+  projectId: "ljschedule",
+  storageBucket: "ljschedule.firebasestorage.app",
+  messagingSenderId: "416241223021",
+  appId: "1:416241223021:web:82c1bf2ed6710e846d0664"
+};
+
+const fbApp = initializeApp(firebaseConfig);
+const db = getFirestore(fbApp);
+const docRef = doc(db, "schedule", "events");
+
+async function saveToFirebase() {
+  try {
+    await setDoc(docRef, { events: events, nextId: nextId });
+  } catch(e) {
+    localStorage.setItem('ijuni3_ev', JSON.stringify(events));
+  }
+}
+
+onSnapshot(docRef, (snap) => {
+  if (snap.exists()) {
+    const data = snap.data();
+    events = data.events || [];
+    nextId = data.nextId || 200;
+    renderSubTabs();
+    renderSchedule();
+    if (currentMain === 'monthly') { renderCalendar(); if(selectedDate) renderDateDetail(selectedDate); }
+  } else {
+    events = makeWeeklyEvents();
+    nextId = events.length + 1;
+    saveToFirebase();
+  }
+});
+
 renderSubTabs();
 renderSchedule();
 </script>
