@@ -179,14 +179,14 @@ function loadFromStorage(){
   const s=localStorage.getItem('ijuni3_ev');
   const ver=localStorage.getItem('ijuni3_ver');
   // 버전 4 = 전체연도 데이터. 다른 버전이면 초기화
-  if(s && ver==='5'){
+  if(s && ver==='6'){
     events=JSON.parse(s);
     nextId=parseInt(localStorage.getItem('ijuni3_id'))||500;
   } else {
     events=makeWeeklyEvents();
     nextId=events.length+1;
     saveToStorage();
-    localStorage.setItem('ijuni3_ver','5');
+    localStorage.setItem('ijuni3_ver','6');
   }
 }
 
@@ -275,8 +275,11 @@ function renderFull(area){
 
 function renderDayView(area,dayName){
   const now=new Date();
-  const curMonthPrefix=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-`;
-  const evs=events.filter(e=>e.date.startsWith(curMonthPrefix)&&dateToDay(e.date)===dayName);
+  const curYear=now.getFullYear();
+  const curMonth=now.getMonth()+1;
+  const todayStr=`${curYear}-${String(curMonth).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+  const curMonthPrefix=`${curYear}-${String(curMonth).padStart(2,'0')}-`;
+  const evs=events.filter(e=>e.date.startsWith(curMonthPrefix)&&e.date>=todayStr&&dateToDay(e.date)===dayName);
   const seen=new Set();
   const unique=evs.filter(e=>{if(seen.has(e.name))return false;seen.add(e.name);return true;});
   function timeToMin(t){const p=t.split(':');return parseInt(p[0])*60+parseInt(p[1]);}
@@ -475,6 +478,7 @@ function initMemos(){
 loadFromStorage();
 renderSubTabs();
 renderSchedule();
+initMemos();
 (function(){
   const now=new Date();
   const y=now.getFullYear();
