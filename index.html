@@ -52,7 +52,7 @@
 
   <div class="contact-card" style="background:var(--lemon)">
     <div class="contact-header">
-      <div class="contact-name">🥋 MTA</div>
+      <div class="contact-name">🥊 MTA</div>
       <button class="contact-edit-btn" onclick="openContactModal('c4')">✏️</button>
     </div>
     <div class="contact-sub">아토아트미술학원 건물</div>
@@ -183,7 +183,7 @@ function makeWeeklyEvents(){
     ['화',{n:'✏️ 필즈',t:'16:10~18:00',note:'→ 도농초앞',c:'lilac'}],
     ['화',{n:'🚌 뮤뮤버스',t:'18:10',note:'도농초 6시5분',c:'coral'}],
     ['수',{n:'🏫 등원',t:'8:40',note:'',c:'sky'}],
-    ['수',{n:'🥋 MTA',t:'14:30~15:30',note:'시애틀→MTA→이화뮤뮤',c:'peach'}],
+    ['수',{n:'🥊 MTA',t:'14:30~15:30',note:'시애틀→MTA→이화뮤뮤',c:'peach'}],
     ['수',{n:'🎹 이화뮤뮤',t:'16:00~17:00',note:'→ 도농초',c:'pink'}],
     ['수',{n:'🚌 뮤뮤버스',t:'18:10',note:'도농초 6시10분',c:'coral'}],
     ['목',{n:'🏫 등원',t:'8:40',note:'',c:'sky'}],
@@ -191,7 +191,7 @@ function makeWeeklyEvents(){
     ['목',{n:'⚽ 축구',t:'17:00~18:30',note:'',c:'mint'}],
     ['금',{n:'🏫 등원',t:'8:40',note:'',c:'sky'}],
     ['금',{n:'🏫 방과후',t:'14:30~16:30',note:'',c:'sky'}],
-    ['금',{n:'🥋 MTA',t:'16:30~17:30',note:'시애틀→MTA→도농초',c:'peach'}],
+    ['금',{n:'🥊 MTA',t:'16:30~17:30',note:'시애틀→MTA→도농초',c:'peach'}],
     ['금',{n:'🚌 도농초버스',t:'18:10',note:'',c:'coral'}],
     ['토',{n:'🤿 스쿠버',t:'9:00~11:00',note:'',c:'mint'}],
   ];
@@ -237,14 +237,14 @@ function loadFromStorage(){
   const s=localStorage.getItem('ijuni3_ev');
   const ver=localStorage.getItem('ijuni3_ver');
   // 버전 4 = 전체연도 데이터. 다른 버전이면 초기화
-  if(s && ver==='6'){
+  if(s && ver==='7'){
     events=JSON.parse(s);
     nextId=parseInt(localStorage.getItem('ijuni3_id'))||500;
   } else {
     events=makeWeeklyEvents();
     nextId=events.length+1;
     saveToStorage();
-    localStorage.setItem('ijuni3_ver','6');
+    localStorage.setItem('ijuni3_ver','7');
   }
 }
 
@@ -530,7 +530,7 @@ function openContactModal(id){
     'c1':{name:'🎻 신벼리 바이올린 (소래음스튜디오)',addr:'경기도 남양주시 다산순환로 166 신화타워 804~805호',tel:'010-5165-9220',memo:''},
     'c2':{name:'🏫 시애틀키즈 (Seattle Kids)',addr:'경기도 남양주시 다산순환로 166 신화타워 4층',tel:'031-523-3346',memo:''},
     'c3':{name:'🎹 이화뮤뮤음악학원',addr:'경기도 남양주시 다산중앙로 117 안강E타워 5층',tel:'031-565-3626',memo:''},
-    'c4':{name:'🥋 MTA',addr:'경기도 남양주시 다산중앙로20번길 10-30 101호',tel:'010-7524-4982',memo:''},
+    'c4':{name:'🥊 MTA',addr:'경기도 남양주시 다산중앙로20번길 10-30 101호',tel:'010-7524-4982',memo:''},
     'c5':{name:'⚽ AAFC 다산축구',addr:'경기 남양주시 다산순환로 50 현대프리미엄아울렛 스페이스원 4층',tel:'010-5535-9456',memo:''},
     'c6':{name:'🤿 오차노브스쿠버',addr:'거북섬중앙로 1 1동 3층',tel:'0507-1336-3099',memo:''},
   };
